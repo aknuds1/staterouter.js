@@ -1,8 +1,15 @@
+if (typeof String.prototype.startsWith !== 'function') {
+    String.prototype.startsWith = function (str) {
+        return this.slice(0, str.length) === str; 
+    };
+}
+
 describe('Test Router', function () {
     var getHome;
     var getPersons;
     var getPerson;
     var router;
+    var baseAddress = 'http://example.com';
 
     // Trigger the statechange event
     function triggerStateChange() {
@@ -16,7 +23,7 @@ describe('Test Router', function () {
 
         router = new staterouter.Router();
         // Start out with '/' as the URL
-        var history = [{data: null, title: null, url: '/'}];
+        var history = [{data: null, title: null, url: baseAddress}];
         var curState = 0;
         spyOn(History, 'getState').andCallFake(function () {
             if (curState < 0)
@@ -24,6 +31,12 @@ describe('Test Router', function () {
             return history[curState];
         });
         spyOn(History, 'pushState').andCallFake(function (data, title, url) {
+            if (!url.startsWith(baseAddress)) {
+                if (!url.startsWith('/')) {
+                    url = '/' + url;
+                }
+                url = baseAddress + url;
+            }
             // Pop any future history
             curState += 1;
             history = history.slice(0, curState);
@@ -77,7 +90,7 @@ describe('Test Router', function () {
         expect(getPerson).toHaveBeenCalled();
         expect(getPersons).toHaveBeenCalled();
         expect(getHome).toHaveBeenCalled();
-        expect(History.getState().url).toEqual('/');
+        expect(History.getState().url).toEqual(baseAddress);
     });
 
     it('supports going forward in browsing history', function () {
@@ -89,7 +102,7 @@ describe('Test Router', function () {
         expect(getHome.calls.length).toEqual(1);
         expect(getPerson.calls.length).toEqual(2);
         expect(getPersons.calls.length).toEqual(2);
-        expect(History.getState().url).toEqual('/persons');
+        expect(History.getState().url).toEqual(baseAddress + '/persons');
     });
 
     it('lets you trigger routing', function () {
