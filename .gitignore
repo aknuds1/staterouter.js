@@ -1,3 +1,7 @@
 *~
 *.sw*
 *.bak
+.sconsign*
+*.nuspec
+*.nupkg
+Content/
