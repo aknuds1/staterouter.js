@@ -55,7 +55,8 @@ Download lib/staterouter.js and include it in your page after History.js.
 
 ## Testing
 
-StateRouter.js is tested through Jasmine specifications. In order to run them,
-open 'specrunner.html' in a browser.
+StateRouter.js is tested through Jasmine specifications, contained in
+'spec/StateRouter.js'. In order to run them, open 'specrunner.html' in a
+browser.
 
 <!-- vim: set ff=unix sts=4 sw=4 et: -->
