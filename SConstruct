@@ -10,7 +10,7 @@ PACKAGE_METADATA = {
     "license_url": "http://opensource.org/licenses/MIT",
     "project_url": "https://github.com/aknuds1/staterouter.js",
     "description": "StateRouter.js is a small JavaScript library intended to extend the History.js HTML5 history library with routing capabilities.",
-    "release_notes": "The very first version.",
+    "release_notes": "Assign current state to this when invoking router callbacks.",
     "copyright": "Copyright 2013",
     "tags": ("JavaScript", "HTML5", "Routing"),
     "dependencies": (("history.js", "1.7.0"),),

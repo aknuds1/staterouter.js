@@ -5,31 +5,32 @@ if (typeof String.prototype.startsWith !== 'function') {
 }
 
 describe('Test Router', function () {
-    var getHome;
-    var getPersons;
-    var getPerson;
-    var router;
-    var baseAddress = 'http://example.com';
+    var getHome, getPersons, getPerson, router, baseAddress = 'http://example.com',
+        curState, history;
 
     // Trigger the statechange event
     function triggerStateChange() {
         $(window).trigger('statechange');
     }
 
+    // Get the currently faked state
+    function getState() {
+        if (curState < 0) {
+            return null;
+        }
+        return history[curState];
+    }
+
     beforeEach(function () {
+        curState = 0;
         getHome = jasmine.createSpy('getHome');
         getPersons = jasmine.createSpy('getPersons');
         getPerson = jasmine.createSpy('getPerson');
 
         router = new staterouter.Router();
         // Start out with '/' as the URL
-        var history = [{data: null, title: null, url: baseAddress}];
-        var curState = 0;
-        spyOn(History, 'getState').andCallFake(function () {
-            if (curState < 0)
-                return null;
-            return history[curState];
-        });
+        history = [{data: null, title: null, url: baseAddress}];
+        spyOn(History, 'getState').andCallFake(getState);
         spyOn(History, 'pushState').andCallFake(function (data, title, url) {
             if (!url.startsWith(baseAddress)) {
                 if (!url.startsWith('/')) {
@@ -60,6 +61,8 @@ describe('Test Router', function () {
         router.route(path, getHome).navigate(path);
         expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, path);
         expect(getHome).toHaveBeenCalledWith();
+        // Router callbacks should be called with the current state as 'this'
+        expect(getHome.mostRecentCall.object).toEqual(getState());
     });
 
     it('should normalize URLs so they start with /', function () {
