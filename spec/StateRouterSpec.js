@@ -72,13 +72,11 @@ describe('Test Router', function () {
     });
 
     it('should route paths with parameters to mapped functions', function () {
-        console.log("!Okidok")
         var route1 = '/persons/:id/:resource';
         var path1 = '/persons/1/person-name';
         router.route(route1, getPerson).navigate(path1);
         expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, path1);
         expect(getPerson).toHaveBeenCalledWith('1', 'person-name');
-        console.log("Okidok!")
     });
 
     it('supports navigating to a location', function () {
