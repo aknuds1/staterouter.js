@@ -72,11 +72,25 @@ describe('Test Router', function () {
     });
 
     it('should route paths with parameters to mapped functions', function () {
-        var route1 = '/persons/:id/:resource';
-        var path1 = '/persons/1/person-name';
-        router.route(route1, getPerson).navigate(path1);
-        expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, path1);
+        var route = '/persons/:id/:resource';
+        var path = '/persons/1/person-name';
+        router.route(route, getPerson).navigate(path);
+        expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, path);
         expect(getPerson).toHaveBeenCalledWith('1', 'person-name');
+    });
+
+    it ('should ignore URL fragments', function () {
+        var route = '/', path = '/#frag';
+        router.route(route, getHome).navigate(path);
+        expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, path);
+        expect(getHome).toHaveBeenCalledWith();
+    });
+
+    it ('should ignore URL queries', function () {
+        var route = '/', path = '/?option=0';
+        router.route(route, getHome).navigate(path);
+        expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, path);
+        expect(getHome).toHaveBeenCalledWith();
     });
 
     it('supports navigating to a location', function () {
