@@ -48,13 +48,16 @@ Download lib/staterouter.js and include it in your page after History.js.
         router.perform();
 
         // Navigate to a URL, also specifying the page's data and title
-        router.navigate('/persons/1?alert=true', {what: "State"}, "Person");
+        router.navigate('/persons/1');
 
         // Go back
         router.back();
 
         // Go forward
         router.go(1);
+
+        // Navigate to a URL, also specifying the page's data and title
+        router.navigate('/persons/1?alert=true', {what: 'State'}, 'Person');
     });
 
 ## Testing
