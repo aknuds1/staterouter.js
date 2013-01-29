@@ -91,12 +91,21 @@ describe('Test Router', function () {
         router.route(route, getHome).navigate(path);
         expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, path);
         expect(getHome).toHaveBeenCalledWith();
+        expect(getHome.mostRecentCall.object).toEqual(getState());
     });
 
     it('supports navigating to a location', function () {
         var path = '/persons';
         router.navigate(path);
         expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, path);
+    });
+
+    it('supports supplying data and title when navigating', function () {
+        var path = '/persons', data = {what: 'State'}, title = 'Person';
+        router.route('/persons', getPerson).navigate(path, data, title);
+        expect(History.pushState).toHaveBeenCalledWith(data, title, path);
+        expect(getPerson).toHaveBeenCalledWith();
+        expect(getPerson.mostRecentCall.object).toEqual({title: title, data: data, url: baseAddress + path})
     });
 
     it('supports going backward in browsing history', function () {

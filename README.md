@@ -30,6 +30,10 @@ Download lib/staterouter.js and include it in your page after History.js.
     function getPersons() {
     }
     function getPerson(id) {
+        // Browser state is accessible as the this variable
+        if (/^.+?\?alert=true$/.test(this.url)) {
+            alert("What: " + this.data.what + "\nTitle: " + this.title + "\nURL: " + this.url);
+        }
     }
 
     var router = new staterouter.Router();
@@ -43,8 +47,8 @@ Download lib/staterouter.js and include it in your page after History.js.
         // Perform initial routing
         router.perform();
 
-        // Navigate to a URL
-        router.navigate('/persons/1');
+        // Navigate to a URL, also specifying the page's data and title
+        router.navigate('/persons/1?alert=true', {what: "State"}, "Person");
 
         // Go back
         router.back();
