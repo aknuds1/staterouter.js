@@ -1,1 +1,2 @@
+* Support navigating to relative paths
 * Add spec that it is possible to supply data and title to Router.navigate

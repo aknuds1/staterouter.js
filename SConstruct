@@ -5,7 +5,7 @@ import subprocess
 
 PACKAGE_METADATA = {
     "name": "StateRouter.js",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "authors": ("Arve Knudsen",),
     "license_url": "http://opensource.org/licenses/MIT",
     "project_url": "https://github.com/aknuds1/staterouter.js",

@@ -108,6 +108,15 @@ describe('Test Router', function () {
         expect(getPerson.mostRecentCall.object).toEqual({title: title, data: data, url: baseAddress + path})
     });
 
+    it('supports navigating to a relative location', function () {
+        // Start out with a path
+        router.navigate('/persons');
+        var id = '1';
+        // This should be interpreted as relative to /persons/
+        router.route('/persons/:id', getPerson).navigate(id);
+        expect(getPerson).toHaveBeenCalledWith(id);
+    })
+
     it('supports going backward in browsing history', function () {
         router.route('/', getHome).route('/persons/:id', getPerson).route('/persons', getPersons)
             .navigate('/persons/1').navigate('/persons');
