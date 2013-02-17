@@ -89,8 +89,8 @@ pkgFname = PACKAGE_METADATA["name"].replace(".", "")
 
 env = Environment(ENV=os.environ)
 
-script = env.Command("content/Scripts/staterouter.js", "lib/staterouter.js", installJs)
-minScript = env.Command("content/Scripts/staterouter.min.js", script, "uglifyjs $SOURCE -o $TARGET -c")
+script = "lib/staterouter.js"
+minScript = env.Command("lib/staterouter.min.js", script, "uglifyjs $SOURCE -o $TARGET -c")
 nuspec = env.Command("{0}.nuspec".format(pkgFname), env.Value(PACKAGE_METADATA), makeNuspec)
 env.Command("{0}.{1}.nupkg".format(PACKAGE_METADATA["name"], PACKAGE_METADATA["version"]), [nuspec, script, minScript],
         makeNupkg)

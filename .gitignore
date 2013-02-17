@@ -4,4 +4,4 @@
 .sconsign*
 *.nuspec
 *.nupkg
-Content/
+*.min.js
