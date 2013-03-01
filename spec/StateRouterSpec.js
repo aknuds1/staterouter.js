@@ -1,3 +1,5 @@
+'use strict';
+
 if (typeof String.prototype.startsWith !== 'function') {
     String.prototype.startsWith = function (str) {
         return this.slice(0, str.length) === str; 
@@ -21,6 +23,13 @@ describe('Test Router', function () {
         return history[curState];
     }
 
+    function getAbsUrl(path) {
+        if (!path.startsWith('/')) {
+            path = '/' + path;
+        }
+        return baseAddress + path;
+    }
+
     beforeEach(function () {
         curState = 0;
         getHome = jasmine.createSpy('getHome');
@@ -32,13 +41,18 @@ describe('Test Router', function () {
         history = [{data: null, title: null, url: baseAddress}];
         spyOn(History, 'getState').andCallFake(getState);
         spyOn(History, 'pushState').andCallFake(function (data, title, url) {
+            var theState = getState();
             if (!url.startsWith(baseAddress)) {
-                if (!url.startsWith('/')) {
-                    url = '/' + url;
-                }
-                url = baseAddress + url;
+                url = getAbsUrl(url);
             }
-            // Pop any future history
+
+            // Emulate that History.js doesn't trigger statechange when
+            // re-pushing the same state
+            if (url === theState.url && data === theState.data && title === theState.title) {
+                return;
+            }
+
+            // Pop any future history 
             curState += 1;
             history = history.slice(0, curState);
             history.push({data: data, title: title, url: url});
@@ -57,18 +71,18 @@ describe('Test Router', function () {
     });
 
     it('should route paths to mapped functions', function () {
-        var path = '/';
-        router.route(path, getHome).navigate(path);
+        var path = '/persons';
+        router.route(path, getPersons).navigate(path);
         expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, path);
-        expect(getHome).toHaveBeenCalledWith();
+        expect(getPersons).toHaveBeenCalledWith();
         // Router callbacks should be called with the current state as 'this'
-        expect(getHome.mostRecentCall.object).toEqual(getState());
+        expect(getPersons.mostRecentCall.object).toEqual(getState());
     });
 
     it('should normalize URLs so they start with /', function () {
-        router.route('', getHome).navigate('');
-        expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, '/');
-        expect(getHome).toHaveBeenCalledWith();
+        router.route('persons', getPersons).navigate('persons');
+        expect(History.pushState).toHaveBeenCalledWith(undefined, undefined, '/persons');
+        expect(getPersons).toHaveBeenCalledWith();
     });
 
     it('should route paths with parameters to mapped functions', function () {
@@ -105,7 +119,7 @@ describe('Test Router', function () {
         router.route('/persons', getPerson).navigate(path, data, title);
         expect(History.pushState).toHaveBeenCalledWith(data, title, path);
         expect(getPerson).toHaveBeenCalledWith();
-        expect(getPerson.mostRecentCall.object).toEqual({title: title, data: data, url: baseAddress + path})
+        expect(getPerson.mostRecentCall.object).toEqual({title: title, data: data, url: getAbsUrl(path)})
     });
 
     it('supports navigating to a relative location', function () {
@@ -137,13 +151,39 @@ describe('Test Router', function () {
         expect(getHome.calls.length).toEqual(1);
         expect(getPerson.calls.length).toEqual(2);
         expect(getPersons.calls.length).toEqual(2);
-        expect(History.getState().url).toEqual(baseAddress + '/persons');
+        expect(History.getState().url).toEqual(getAbsUrl('/persons'));
     });
 
     it('lets you trigger routing', function () {
         router.route('/', getHome).perform();
 
         expect(getHome).toHaveBeenCalled();
+    });
+
+    it('triggers statechange event when re-navigating to the current URL/state', function () {
+        router.route('/', getHome);
+        router.navigate('/');
+        router.navigate('/');
+
+        expect(getHome.calls.length).toEqual(2);
+    });
+
+    it('pushes state when re-navigating to the current URL with different state or title', function () {
+        var path = '/persons', absUrl;
+        absUrl = getAbsUrl(path);
+        router.route(path, getPersons);
+        router.navigate(path);
+        router.navigate(path, 'newState');
+        router.navigate(path, 'newState', 'newTitle');
+
+        expect(getPersons.calls.length).toEqual(3);
+        // Get rid of the first history entry, as this will be the root URL
+        history.splice(0, 1);
+        expect(history).toEqual([
+            {url: absUrl, data: undefined, title: undefined},
+            {url: absUrl, data: 'newState', title: undefined},
+            {url: absUrl, data: 'newState', title: 'newTitle'},
+            ]);
     });
 });
 
