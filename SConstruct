@@ -5,12 +5,12 @@ import subprocess
 
 PACKAGE_METADATA = {
     "name": "StateRouter.js",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "authors": ("Arve Knudsen",),
     "license_url": "http://opensource.org/licenses/MIT",
     "project_url": "https://github.com/aknuds1/staterouter.js",
     "description": "StateRouter.js is a small JavaScript library intended to extend the History.js HTML5 history library with routing capabilities.",
-    "release_notes": "Assign current state to this when invoking router callbacks.",
+    "release_notes": "Trigger statechange when re-navigating to same state.",
     "copyright": "Copyright 2013",
     "tags": ("JavaScript", "HTML5", "Routing"),
     "dependencies": (("history.js", "1.7.0"),),
