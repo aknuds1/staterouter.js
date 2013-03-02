@@ -52,6 +52,14 @@ describe('Test Router', function () {
                 return;
             }
 
+            // Emulate how empty data and title are typically represented by browsers
+            if (data === undefined) {
+                data = {};
+            }
+            if (title === undefined) {
+                title = '';
+            }
+
             // Pop any future history 
             curState += 1;
             history = history.slice(0, curState);
@@ -161,11 +169,13 @@ describe('Test Router', function () {
     });
 
     it('triggers statechange event when re-navigating to the current URL/state', function () {
-        router.route('/', getHome);
-        router.navigate('/');
-        router.navigate('/');
+        router.route('/persons', getPersons);
+        router.navigate('/persons');
+        router.navigate('/persons');
 
-        expect(getHome.calls.length).toEqual(2);
+        // The second navigation should only result in manual triggering of statechange
+        expect(History.pushState.calls.length).toEqual(1);
+        expect(getPersons.calls.length).toEqual(2);
     });
 
     it('pushes state when re-navigating to the current URL with different state or title', function () {
@@ -180,8 +190,8 @@ describe('Test Router', function () {
         // Get rid of the first history entry, as this will be the root URL
         history.splice(0, 1);
         expect(history).toEqual([
-            {url: absUrl, data: undefined, title: undefined},
-            {url: absUrl, data: 'newState', title: undefined},
+            {url: absUrl, data: {}, title: ''},
+            {url: absUrl, data: 'newState', title: ''},
             {url: absUrl, data: 'newState', title: 'newTitle'},
             ]);
     });
