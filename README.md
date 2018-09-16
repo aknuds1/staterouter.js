@@ -12,7 +12,7 @@ I wasn't able to find any routing libraries for History.js that I was quite
 happy with, so I decided I might as well write my own. An important benefit of
 doing it myself is that I can ensure good test coverage. The tests are written
 BDD style, with the help of the excellent
-[Jasmine](http://pivotal.github.com/jasmine/) framework.
+[Jasmine](https://jasmine.github.io/) framework.
 
 ## Requirements
 
